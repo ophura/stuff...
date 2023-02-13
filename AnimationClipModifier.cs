@@ -21,7 +21,8 @@ namespace ophura.jp
             }
         }
 
-
+        
+        // https://forum.unity.com/threads/how-to-enable-looptime-property-of-animationclip-via-code.832633/
         private void SetAnimationClipLoopTime(bool value)
         {
             string[] clipGUIDs = AssetDatabase.FindAssets(
