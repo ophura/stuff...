@@ -128,10 +128,10 @@ consider to drag-and-drop it manually instead after clicking `ok`!",
             
             if (physBone.ignoreTransforms.Contains(eye))
             {
-                var username = System.Environment.UserName.ToLower();
-                username = $"but {username}...\nyou already did that there!";
+                var message = System.Environment.UserName.ToLower();
+                message = $"but {message}...\nyou already did that there!";
 
-                ShowNotification(new GUIContent(username), 1.5F);
+                ShowNotification(new GUIContent(message), 1.5F);
                 
                 EditorApplication.Beep();
                 
