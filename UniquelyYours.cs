@@ -102,17 +102,14 @@ namespace Uniquely.Yours
             }
             catch (System.NullReferenceException)
             {
-                InformRappy();
+                _ = EditorUtility.DisplayDialog(
+                    title: "Rapture's",
+                    message: $@"hey {System.Environment.UserName}! xD
+this `code` failed to find your Avatar...
+consider to drag-and-drop it manually instead after clicking `ok`!",
+                    "ok"
+                );
             }
-        }
-        
-        private void InformRappy()
-        {
-            var message = $"hey {System.Environment.UserName}! xD\nthis `code` ";
-            message += $"failed to find your Avatar, consider to drag-and-drop ";
-            message += "it manually instead after clicking `ok`!";
-
-            _ = EditorUtility.DisplayDialog("Rapture's", message, "ok");
         }
         
         private void AddTheFunnyPhysBone()
@@ -135,6 +132,9 @@ namespace Uniquely.Yours
                 username = $"but {username}...\nyou already did that there!";
 
                 ShowNotification(new GUIContent(username), 1.5F);
+                
+                EditorApplication.Beep();
+                
                 PingAndSelect(neck);
 
                 return;
