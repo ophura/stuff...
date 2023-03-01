@@ -8,7 +8,7 @@ namespace Uniquely.Yours
     using System.IO;
     
     
-    internal class UniquelyYours : EditorWindow
+    internal sealed class UniquelyYours : EditorWindow
     {
         [MenuItem("Rapture/uniquely Rapture's")]
         private static void FocusOrDisplayWindow()
