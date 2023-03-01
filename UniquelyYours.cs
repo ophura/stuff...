@@ -1,7 +1,7 @@
 namespace Uniquely.Yours
 {
+    using Descriptor = VRC.SDK3.Avatars.Components.VRCAvatarDescriptor;
     using VRC.SDK3.Dynamics.PhysBone.Components;
-    using VRC.SDK3.Avatars.Components;
     using UnityEngine.SceneManagement;
     using UnityEngine;
     using UnityEditor;
@@ -20,7 +20,7 @@ namespace Uniquely.Yours
             var y = (Screen.height - HEIGHT) / 2F;
             
             var pos = new Rect(x, y, WIDTH, HEIGHT);
-
+            
             const string TITLE = "uniquely, yours!";
             
             _ = GetWindowWithRect<UniquelyYours>(pos, utility: true, TITLE, focus: true);
@@ -60,10 +60,10 @@ namespace Uniquely.Yours
                 "it means your main Avatar you slilly xD"
             );
             
-            descriptor = (VRCAvatarDescriptor)EditorGUILayout.ObjectField(
+            descriptor = (Descriptor)EditorGUILayout.ObjectField(
                 label,
                 obj: descriptor,
-                objType: typeof(VRCAvatarDescriptor),
+                objType: typeof(Descriptor),
                 allowSceneObjects: true,
                 options: GUILayout.Height(50F)
             );
@@ -74,9 +74,9 @@ namespace Uniquely.Yours
 
             if (GUILayout.Button("add the funny!", style, GUILayout.Height(50F)))
             {
-                PerformActionOnAvi();
+                AddTheFunnyPhysBone();
             }
-            
+
             GUI.enabled = true;
         }
         
@@ -87,11 +87,11 @@ namespace Uniquely.Yours
 
             foreach (var gO in rootGameObjects)
             {
-                descriptor = gO.GetComponentInChildren<VRCAvatarDescriptor>(
-                    includeInactive: true
-                );
-                
+                descriptor = gO.GetComponentInChildren<Descriptor>(includeInactive: true);
+
                 if (descriptor != null) break;
+
+                else continue; // the loop
             }
 
             try
@@ -114,8 +114,8 @@ namespace Uniquely.Yours
 
             _ = EditorUtility.DisplayDialog("Rapture's", message, "ok");
         }
-
-        private void PerformActionOnAvi()
+        
+        private void AddTheFunnyPhysBone()
         {
             var animator = descriptor.GetComponent<Animator>();
 
@@ -132,11 +132,9 @@ namespace Uniquely.Yours
             if (physBone.ignoreTransforms.Contains(eye))
             {
                 var username = System.Environment.UserName.ToLower();
-
                 username = $"but {username}...\nyou already did that there!";
 
                 ShowNotification(new GUIContent(username), 1.5F);
-
                 PingAndSelect(neck);
 
                 return;
@@ -144,7 +142,7 @@ namespace Uniquely.Yours
             
             AddIgnoreTransforms(neck, physBone);
             AddIgnoreTransforms(head, physBone);
-
+            
             PingAndSelect(neck);
         }
         
@@ -170,7 +168,7 @@ namespace Uniquely.Yours
         }
         
         
-        private VRCAvatarDescriptor descriptor;
+        private Descriptor descriptor;
         
         private Texture texture;
     }
