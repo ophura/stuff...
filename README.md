@@ -1,2 +1,2 @@
 # stuff...
-[download](https://github.com/ophura/stuff.../releases/download/unity/UniquelyYours.unitypackage) the `uniquely-yours` unitypackage
+[download](https://github.com/ophura/stuff.../releases/download/unitypackage/uniquely-yours.unitypackage) the `uniquely-yours` unitypackage
