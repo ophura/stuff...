@@ -1,10 +1,11 @@
 namespace Uniquely.Yours
 {
-    using AvatarDescriptor = VRC.SDK3.Avatars.Components.VRCAvatarDescriptor;
     using VRC.SDK3.Dynamics.PhysBone.Components;
+    using VRC.SDK3.Avatars.Components;
     using UnityEngine.SceneManagement;
     using UnityEngine;
     using UnityEditor;
+    using System.IO;
     
     
     internal class UniquelyYours : EditorWindow
@@ -12,60 +13,62 @@ namespace Uniquely.Yours
         [MenuItem("Rapture/uniquely Rapture's")]
         private static void FocusOrDisplayWindow()
         {
-            var pos = new Rect((Screen.width - 385F) / 2F,
-                (Screen.height - 512F) / 2F, 385F, 512F
-                );
+            const float WIDTH = 385F;
+            const float HEIGHT = 512F;
             
-            _ = GetWindowWithRect<UniquelyYours>(
-                pos, true, "uniquely, yours!", true
-                );
+            var x = (Screen.width - WIDTH) / 2F;
+            var y = (Screen.height - HEIGHT) / 2F;
+            
+            var pos = new Rect(x, y, WIDTH, HEIGHT);
+
+            const string TITLE = "uniquely, yours!";
+            
+            _ = GetWindowWithRect<UniquelyYours>(pos, utility: true, TITLE, focus: true);
         }
         
         
-        private AvatarDescriptor descriptor;
-        
-        private Texture texture;
-        
-        
-        private void OnEnable()
+        private void Awake()
         {
             TryFindAvatar();
+            
+            const string TEXTURE_PATH = "Assets/editor/resource/rappy.png";
 
-            if (texture == null)
-            {
-                texture = AssetDatabase.LoadAssetAtPath<Texture>(
-                    "Assets/editor/resource/rappy.png"
-                    );
-            }
+            if (File.Exists(TEXTURE_PATH) is false) return;
+            
+            else texture = AssetDatabase.LoadAssetAtPath<Texture>(TEXTURE_PATH);
         }
         
         private void OnGUI()
         {
             if (texture != null)
             {
-                EditorGUI.DrawPreviewTexture(
-                    new Rect(0F, 0F, 385F, 385F), texture
-                    );
+                var pos = new Rect(x: 0F, y: 0F, width: 385F, height: 385F);
+                
+                EditorGUI.DrawPreviewTexture(pos, texture);
+
+                GUILayout.Space(pixels: 395F);
             }
             
-            GUILayout.Space(395F);
-
             var style = new GUIStyle(GUI.skin.button)
             {
                 richText = true,
                 fontSize = 15
             };
 
-            descriptor = (AvatarDescriptor)EditorGUILayout.ObjectField(
-                new GUIContent("subject Avatar",
-                "it means your main Avatar you slilly xD"),
-                descriptor,
-                typeof(AvatarDescriptor),
-                true,
-                GUILayout.Height(50F)
+            var label = new GUIContent(
+                "subject Avatar",
+                "it means your main Avatar you slilly xD"
             );
             
-            GUILayout.Space(10F);
+            descriptor = (VRCAvatarDescriptor)EditorGUILayout.ObjectField(
+                label,
+                obj: descriptor,
+                objType: typeof(VRCAvatarDescriptor),
+                allowSceneObjects: true,
+                options: GUILayout.Height(50F)
+            );
+            
+            GUILayout.Space(pixels: 10F);
             
             GUI.enabled = descriptor != null;
 
@@ -80,21 +83,21 @@ namespace Uniquely.Yours
         
         private void TryFindAvatar()
         {
-            if (descriptor != null) return;
+            var rootGameObjects = SceneManager.GetActiveScene().GetRootGameObjects();
 
-            var rootObjs = SceneManager.GetActiveScene().GetRootGameObjects();
-
-            foreach (var obj in rootObjs)
+            foreach (var gO in rootGameObjects)
             {
-                descriptor = obj.GetComponentInChildren<AvatarDescriptor>(true);
-
+                descriptor = gO.GetComponentInChildren<VRCAvatarDescriptor>(
+                    includeInactive: true
+                );
+                
                 if (descriptor != null) break;
             }
 
             try
             {
-                descriptor.gameObject.SetActive(true);
-
+                descriptor.gameObject.SetActive(value: true);
+                
                 EditorGUIUtility.PingObject(descriptor);
             }
             catch (System.NullReferenceException)
@@ -111,41 +114,41 @@ namespace Uniquely.Yours
 
             _ = EditorUtility.DisplayDialog("Rapture's", message, "ok");
         }
-        
+
         private void PerformActionOnAvi()
         {
             var animator = descriptor.GetComponent<Animator>();
 
-            if (!animator.avatar.isHuman) return;
+            if (animator.avatar.isHuman is false) return;
 
+            var eye = animator.GetBoneTransform(HumanBodyBones.RightEye);
+            var head = animator.GetBoneTransform(HumanBodyBones.Head);
             var neck = animator.GetBoneTransform(HumanBodyBones.Neck);
-
+            
             var physBone = neck.gameObject.GetOrAddComponent<VRCPhysBone>();
-
-            if (physBone.ignoreTransforms.Count > 0)
+            
+            physBone.rootTransform = neck;
+            
+            if (physBone.ignoreTransforms.Contains(eye))
             {
-                var noti = System.Environment.UserName.ToLower();
-                noti = $"but {noti}...\nyou already did that there!";
+                var username = System.Environment.UserName.ToLower();
 
-                ShowNotification(new GUIContent(noti), 1.5F);
+                username = $"but {username}...\nyou already did that there!";
 
-                EditorGUIUtility.PingObject(neck);
+                ShowNotification(new GUIContent(username), 1.5F);
+
+                PingAndSelect(neck);
 
                 return;
             }
-
-            AddIgnoreTrans(neck, physBone);
-
-            var head = animator.GetBoneTransform(HumanBodyBones.Head);
             
-            AddIgnoreTrans(head, physBone);
-            
-            physBone.rootTransform = neck;
+            AddIgnoreTransforms(neck, physBone);
+            AddIgnoreTransforms(head, physBone);
 
-            EditorGUIUtility.PingObject(neck);
+            PingAndSelect(neck);
         }
-
-        private void AddIgnoreTrans(Transform bone, VRCPhysBone pBone)
+        
+        private void AddIgnoreTransforms(Transform bone, VRCPhysBone pBone)
         {
             for (var i = 0; i < bone.childCount; i++)
             {
@@ -158,5 +161,17 @@ namespace Uniquely.Yours
                 pBone.ignoreTransforms.Add(child);
             }
         }
+
+        private void PingAndSelect(Object obj)
+        {
+            EditorGUIUtility.PingObject(obj);
+
+            Selection.activeObject = obj;
+        }
+        
+        
+        private VRCAvatarDescriptor descriptor;
+        
+        private Texture texture;
     }
 }
