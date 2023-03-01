@@ -128,15 +128,10 @@ consider to drag-and-drop it manually instead after clicking `ok`!",
             
             if (physBone.ignoreTransforms.Contains(eye))
             {
-                var message = System.Environment.UserName.ToLower();
-                message = $"but {message}...\nyou already did that there!";
-
-                ShowNotification(new GUIContent(message), 1.5F);
-                
-                EditorApplication.Beep();
-                
                 PingAndSelect(neck);
-
+                
+                NotifiyAndBeep();
+                
                 return;
             }
             
@@ -144,6 +139,21 @@ consider to drag-and-drop it manually instead after clicking `ok`!",
             AddIgnoreTransforms(head, physBone);
             
             PingAndSelect(neck);
+        }
+        
+        private void NotifiyAndBeep()
+        {
+            var message = new GUIContent($@"but {System.Environment.UserName}...
+you already did that there! why do it again? xD");
+            
+            foreach (SceneView sceneView in SceneView.sceneViews)
+            {
+                if (sceneView == null) continue; // the loop
+                
+                else sceneView.ShowNotification(message, fadeoutWait: 2.5F);
+            }
+            
+            EditorApplication.Beep();
         }
         
         private void AddIgnoreTransforms(Transform bone, VRCPhysBone pBone)
