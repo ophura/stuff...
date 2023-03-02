@@ -4,11 +4,11 @@ namespace User.Defined
     using System.Collections.Generic;
     using UnityEngine;
     using UnityEngine.SceneManagement;
-
-
+    
+    
     /// <summary>
-    ///     A <see langword="static"/> <see langword="class"/> to enhance one's experience
-    ///     in Unity GameDev projects...
+    ///     A <see langword="static"/> <see langword="class"/> providing extension methods to enhance
+    ///     one's experience in Unity GameDev projects.
     /// </summary>
     /// <example>
     ///     <![CDATA[
