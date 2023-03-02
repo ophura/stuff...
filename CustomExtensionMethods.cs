@@ -59,16 +59,16 @@ namespace User.Defined
         /// <summary>
         ///     Retrieves <i>every single</i> <see cref="Transform"/> in a given <see cref="Scene"/>.
         /// </summary>
-        /// <param name="targetScene">
+        /// <param name="self">
         ///     This parameter is the current <see cref="Scene"/> instance.
         /// </param>
         /// <returns>
         ///     A <see cref="Transform"/> <see cref="Array"/> comprehending <i>all</i>
         ///     <see cref="Transform"/>s available in the <see cref="Scene"/> in question.
         /// </returns>
-        internal static GameObject[] GetAllGameObjectsInHierarchy(this Scene targetScene)
+        internal static GameObject[] GetAllGameObjectsInHierarchy(this Scene self)
         {
-            var roots = targetScene.GetRootGameObjects();
+            var roots = self.GetRootGameObjects();
 
             var transList = new List<GameObject>();
 
@@ -90,7 +90,7 @@ namespace User.Defined
         ///         <br/><see href="https://docs.unity3d.com/ScriptReference/Component.GetComponentsInChildren.html"/>
         ///     </para>
         /// </remarks>
-        /// <param name="obj">
+        /// <param name="self">
         ///     The originating <see cref="GameObject"/> source currently using the method.
         /// </param>
         /// <returns>
