@@ -1,15 +1,58 @@
 namespace User.Defined
 {
-    using UnityEngine.SceneManagement;
+    using System;
     using System.Collections.Generic;
     using UnityEngine;
-    using System;
-    
-    
+    using UnityEngine.SceneManagement;
+
+
     /// <summary>
-    ///     A <see langword="static"/> <see langword="class"/> to enhance one's life
+    ///     A <see langword="static"/> <see langword="class"/> to enhance one's experience
     ///     in Unity GameDev projects...
     /// </summary>
+    /// <example>
+    ///     <![CDATA[
+    ///     using UnityEngine;
+    ///     using UnityEngine.SceneManagement;
+    ///     using User.Defined;
+    ///     
+    ///     
+    ///     // NOTE: this shoud be attached to a GameObject as a file named: ShowCase.cs
+    ///     internal class ShowCase : MonoBehaviour
+    ///     {
+    ///         [SerializeField]
+    ///         private bool entireScene = true;
+    ///     
+    ///     
+    ///         private void Awake()
+    ///         {
+    ///             if (entireScene) EntireSceneScoped();
+    ///         
+    ///             else GameObjectScoped();
+    ///         }
+    ///     
+    ///     
+    ///         private void EntireSceneScoped()
+    ///         {
+    ///             var scene = SceneManager.GetActiveScene();
+    ///     
+    ///             foreach (var trans in scene.GetAllGameObjectsInHierarchy())
+    ///             {
+    ///                 // TODO: your own code here instead...
+    ///                 print(trans.name);
+    ///             }
+    ///         }
+    ///         
+    ///         private void GameObjectScoped()
+    ///         {
+    ///             foreach (var trans in gameObject.GetSelfAndDescendants())
+    ///             {
+    ///                 print(trans.name);
+    ///             }
+    ///         }
+    ///     }
+    ///     ]]>
+    /// </example>
     internal static class CustomExtensionMethods
     {
         /// <summary>
@@ -22,15 +65,15 @@ namespace User.Defined
         ///     A <see cref="Transform"/> <see cref="Array"/> comprehending <i>all</i>
         ///     <see cref="Transform"/>s available in the <see cref="Scene"/> in question.
         /// </returns>
-        internal static Transform[] GetAllTransformsInScene(this Scene targetScene)
+        internal static GameObject[] GetAllGameObjectsInHierarchy(this Scene targetScene)
         {
             var roots = targetScene.GetRootGameObjects();
 
-            var transList = new List<Transform>();
+            var transList = new List<GameObject>();
 
             for (var i = 0; i < roots.Length; i++)
-                transList.AddRange(roots[i].GetParentAndAllOfItsChildren());
-
+                transList.AddRange(roots[i].GetSelfAndDescendants());
+            
             return transList.ToArray();
         }
 
@@ -53,8 +96,16 @@ namespace User.Defined
         ///     An <see cref="Array"/> of <i>any</i> <see cref="Transform"/> on this
         ///     <see cref="GameObject"/>.
         /// </returns>
-        internal static Transform[] GetParentAndAllOfItsChildren(this GameObject obj) =>
+        internal static GameObject[] GetSelfAndDescendants(this GameObject self)
+        {
+            var transforms = self.GetComponentsInChildren<Transform>(includeInactive: true);
 
-            obj.GetComponentsInChildren<Transform>(includeInactive: true);
+            var gameObjectList = new List<GameObject>(transforms.Length);
+
+            for (var i = 0; i < transforms.Length; i++)
+                gameObjectList.Add(transforms[i].gameObject);
+
+            return gameObjectList.ToArray();
+        }
     }
 }
