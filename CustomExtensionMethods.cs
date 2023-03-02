@@ -22,26 +22,27 @@ namespace User.Defined
     ///     {
     ///         [SerializeField]
     ///         private bool entireScene = true;
-    ///     
-    ///     
+    ///         
+    ///         
     ///         private void Awake()
     ///         {
     ///             if (entireScene) EntireSceneScoped();
-    ///         
+    ///             
     ///             else GameObjectScoped();
     ///         }
-    ///     
-    ///     
+    ///         
+    ///         
     ///         private void EntireSceneScoped()
     ///         {
     ///             var scene = SceneManager.GetActiveScene();
-    ///     
+    ///             
     ///             foreach (var trans in scene.GetAllGameObjectsInHierarchy())
     ///             {
     ///                 // TODO: your own code here instead...
     ///                 print(trans.name);
     ///             }
     ///         }
+    ///         
     ///         
     ///         private void GameObjectScoped()
     ///         {
