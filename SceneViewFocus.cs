@@ -1,14 +1,23 @@
-namespace ophura.jp
+using UnityEditor;
+using PlayModeState = UnityEditor.PlayModeStateChange;
+
+
+internal sealed class SceneViewFocus
 {
-    using UnityEditor;
+    [InitializeOnLoadMethod]
+    private static void RegisterEventHandler() =>
+        
+        EditorApplication.playModeStateChanged += PlayModeStateChangedEventHandler;
     
     
-    // a not recommended way to keep focus on the the so-called: SceneView.
-    // NOTE: this is a UnityEditor script.
-    internal sealed class SceneViewFocus : EditorWindow
+    private static void PlayModeStateChangedEventHandler(PlayModeState playModeState)
     {
-        [InitializeOnEnterPlayMode]
-        private static void _() => EditorApplication.delayCall += () =>
-        FocusWindowIfItsOpen<SceneView>();
+        if (playModeState == PlayModeState.EnteredPlayMode)
+            EditorWindow.FocusWindowIfItsOpen<SceneView>();
     }
+    
+    
+    ~SceneViewFocus() =>
+        
+        EditorApplication.playModeStateChanged -= PlayModeStateChangedEventHandler;
 }
