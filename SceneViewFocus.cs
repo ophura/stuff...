@@ -5,7 +5,7 @@ using PlayModeState = UnityEditor.PlayModeStateChange;
 internal sealed class SceneViewFocus
 {
     [InitializeOnLoadMethod]
-    private static void RegisterEventHandler() =>
+    private static void RegisterEventHandlerOnStartup() =>
         
         EditorApplication.playModeStateChanged += PlayModeStateChangedEventHandler;
     
