@@ -9,29 +9,27 @@ using VRC.SDK3.Avatars.Components;
 // [InitializeOnLoad]
 internal static class GetRenamedYouLittleSilly
 {
-    [MenuItem("Tools/Test")]
-    private static void RunTest()
-    {
-        foreach (var obj in GetAllGameObjectsInDescriptor())
-        {
-            Debug.Log(obj.name);
-        }
-    }
-    
-    
-    //static GetRenamedSilly() =>
-        
-    //    EditorApplication.hierarchyChanged += RenamePoorForgottenThing;
-    
-    
     private static readonly Dictionary<int, string> previousNamesDict = new Dictionary<int, string>();
     
     private static GameObject[] allGameObjectsInDescriptor;
     
     
-    private static void XXX()
+    //static GetRenamedYouLittleSilly() =>
+        
+        //EditorApplication.hierarchyChanged += ExampleName;
+
+
+    [MenuItem("Tools/Test")]
+    private static void RunTest()
     {
-        //var animator = 
+        foreach (var obj in GetAllGameObjectsInDescriptor())
+            Debug.Log(obj.name);
+    }
+    
+    
+    private static void ExampleName()
+    {
+        //var animator = ...
     }
     
     private static GameObject RenamePoorForgottenThing()
