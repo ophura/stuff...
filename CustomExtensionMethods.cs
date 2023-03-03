@@ -4,56 +4,48 @@ namespace User.Defined
     using System.Collections.Generic;
     using UnityEngine;
     using UnityEngine.SceneManagement;
-    
-    
+
+
     /// <summary>
     ///     A <see langword="static"/> <see langword="class"/> providing extension methods to enhance
     ///     one's experience in Unity GameDev projects.
     /// </summary>
-    /// <example>
-    ///     <![CDATA[
-    ///     using UnityEngine;
-    ///     using UnityEngine.SceneManagement;
-    ///     using User.Defined;
-    ///     
-    ///     
-    ///     // NOTE: this shoud be attached to a GameObject as a file named: ShowCase.cs
-    ///     internal class ShowCase : MonoBehaviour
+    /// <![CDATA[
+    /// using UnityEngine;
+    /// using UnityEngine.SceneManagement;
+    /// using User.Defined;
+    /// 
+    /// 
+    /// // NOTE: This shoud be attached to a GameObject as a C# file named: ShowCase
+    /// internal class ShowCase : MonoBehaviour
+    /// {
+    ///     [SerializeField]
+    ///     private bool entireScene = true;
+    /// 
+    /// 
+    ///     private void Awake()
     ///     {
-    ///         [SerializeField]
-    ///         private bool entireScene = true;
-    ///         
-    ///         
-    ///         private void Awake()
-    ///         {
-    ///             if (entireScene) EntireSceneScoped();
-    ///             
-    ///             else GameObjectScoped();
-    ///         }
-    ///         
-    ///         
-    ///         private void EntireSceneScoped()
-    ///         {
-    ///             var scene = SceneManager.GetActiveScene();
-    ///             
-    ///             foreach (var trans in scene.GetAllGameObjectsInHierarchy())
-    ///             {
-    ///                 // TODO: your own code here instead...
-    ///                 print(trans.name);
-    ///             }
-    ///         }
-    ///         
-    ///         
-    ///         private void GameObjectScoped()
-    ///         {
-    ///             foreach (var trans in gameObject.GetSelfAndDescendants())
-    ///             {
-    ///                 print(trans.name);
-    ///             }
-    ///         }
+    ///         if (entireScene) EntireSceneScoped();
+    ///     
+    ///         else GameObjectScoped();
     ///     }
-    ///     ]]>
-    /// </example>
+    /// 
+    /// 
+    ///     private void EntireSceneScoped()
+    ///     {
+    ///         foreach (var gameObject in SceneManager.GetActiveScene().GetAllGameObjectsInHierarchy())
+    ///             // TODO: Your own code here instead...
+    ///             print(gameObject.name);
+    ///     }
+    /// 
+    /// 
+    ///     private void GameObjectScoped()
+    ///     {
+    ///         foreach (var gameObject in gameObject.GetSelfAndDescendants())
+    ///             // TODO: Your own code here instead...
+    ///             print(gameObject.name);
+    ///     }
+    /// }]]>
     internal static class CustomExtensionMethods
     {
         /// <summary>
@@ -74,7 +66,7 @@ namespace User.Defined
 
             for (var i = 0; i < roots.Length; i++)
                 transList.AddRange(roots[i].GetSelfAndDescendants());
-            
+
             return transList.ToArray();
         }
 
