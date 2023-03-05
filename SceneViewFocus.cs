@@ -1,23 +1,60 @@
+#if UNITY_EDITOR
 using UnityEditor;
-using PlayModeState = UnityEditor.PlayModeStateChange;
+using UnityEngine;
 
 
-internal sealed class SceneViewFocus
+internal class SceneViewFocus : MonoBehaviour
 {
-    [InitializeOnLoadMethod]
-    private static void RegisterEventHandlerOnStartup() =>
-        
-        EditorApplication.playModeStateChanged += PlayModeStateChangedEventHandler;
+    private const string GAMEOBJECT_NAME = nameof(SceneViewFocus);
     
+    private static event System.Action OnAwakeEvent;
     
-    private static void PlayModeStateChangedEventHandler(PlayModeState playModeState)
+    private static new GameObject gameObject;
+
+
+    [MenuItem("SceneView/Disable Focus", true)]
+    private static bool DisableFocusValidate()
     {
-        if (playModeState == PlayModeState.EnteredPlayMode)
-            EditorWindow.FocusWindowIfItsOpen<SceneView>();
+        gameObject = GameObject.Find(GAMEOBJECT_NAME);
+
+        return gameObject;
+    }
+
+
+    [MenuItem("SceneView/Disable Focus")]
+    private static void DisableFocus() => DestroyImmediate(gameObject);
+
+
+    [MenuItem("SceneView/Enable Focus", true)]
+    private static bool EnableFocusValidate() => !DisableFocusValidate();
+
+
+    [MenuItem("SceneView/Enable Focus")]
+    private static void EnableFocus() => gameObject = new GameObject(GAMEOBJECT_NAME, typeof(SceneViewFocus))
+    {
+        hideFlags = HideFlags.HideInHierarchy | HideFlags.HideInInspector | HideFlags.NotEditable
+    };
+
+
+    [InitializeOnLoadMethod]
+    private static void RegisterEventHandlerOnStartup() => OnAwakeEvent += OnAwakeEventHandler;
+    
+    
+    private static void OnAwakeEventHandler()
+    {
+        if (EditorWindow.HasOpenInstances<SceneView>())
+        {
+            SceneView.lastActiveSceneView.Focus();
+        }
+        else
+        {
+            var gameView = typeof(Editor).Assembly.GetType("UnityEditor.GameView");
+
+            _ = EditorWindow.GetWindow<SceneView>(new[] { gameView });
+        }
     }
     
     
-    ~SceneViewFocus() =>
-        
-        EditorApplication.playModeStateChanged -= PlayModeStateChangedEventHandler;
+    private void Awake() => OnAwakeEvent?.Invoke();
 }
+#endif
