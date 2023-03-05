@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 
 
-internal class SceneViewFocus : MonoBehaviour
+internal sealed class SceneViewFocus : MonoBehaviour
 {
     private const string GAMEOBJECT_NAME = nameof(SceneViewFocus);
     
